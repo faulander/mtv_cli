@@ -191,7 +191,11 @@ def filme_suchen(options):
 
 def zeige_liste(rows):
   """ Filmliste anzeigen, Auswahl zurückgeben"""
-  return pick(get_select(rows), "  "+SEL_TITEL,multi_select=True)
+  try:
+    _ = pick.__annotations__['multi_select']
+    return pick(get_select(rows), "  "+SEL_TITEL,multi_select=True)
+  except:
+    return pick(get_select(rows), "  "+SEL_TITEL,multiselect=True)
 
 # --- Ergebnisse für späteren Download speichern   --------------------------
 
@@ -298,7 +302,11 @@ def do_edit(options):
 
     select_liste.append(DLL_FORMAT.format(status,datum_status,
                                           sender,thema,datum,dauer,titel))
-  selected = pick(select_liste, DLL_TITEL,multi_select=True)
+  try:
+    _ = pick.__annotations__['multi_select']
+    selected = pick(select_liste, DLL_TITEL,multi_select=True)
+  except:
+    selected = pick(select_liste, DLL_TITEL,multiselect=True)
 
   # IDs extrahieren und Daten löschen
   deletes = []
@@ -427,6 +435,15 @@ if __name__ == '__main__':
   if not get_lock(options.dbfile):
     Msg.msg("ERROR","Datenbank %s ist gesperrt" % options.dbfile)
     sys.exit(3)
+
+  # Konstanten aus mtv_const.py überschreiben
+  for var in ["SEL_FORMAT", "SEL_TITEL",
+              "DLL_FORMAT", "DLL_TITEL", "URL_FILMLISTE"]:
+    try:
+      value = config_parser.get('CONFIG',var)
+      globals()[var] = value
+    except:
+      pass
 
   # Globale Objekte anlegen
   options.config = config

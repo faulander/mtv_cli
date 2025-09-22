@@ -5,7 +5,7 @@ Mediathekview ist eine sehr gute Anwendung, ist aber nicht auf der
 Kommandozeile verwendbar.
 
 Das Kommando `mtv_cli.py` läuft dagegen auch ohne grafische Oberfläche,
-etwa wenn man sich per SSH auf einen Pi mit Kodi-Distribution einlogged.
+etwa wenn man sich per SSH auf einen Pi mit Kodi-Distribution einloggt.
 
 Die Kommandozeilenversion von Mediathekview wird nie den Funktionsumfang
 des Originals erhalten. Es geht um eine einfache, schlanke Lösung die
@@ -21,6 +21,14 @@ Status/Neuigkeiten
 N.B: die interne Version (Abfrage über `mtv_cli --version`) bleibt auf
 `2`, da diese nur bei programmier-relevanten, inkompatiblen
 Änderungen hochgesetzt wird.
+
+### Version 9 / 22.03.25 ###
+
+  - Unterstützung der aktuellen Pick-Version (mit `multiselect` statt
+    `multi_select`)
+  - Einige Konstanten aus mtv_const.py können jetzt in der Konfigurationsdatei
+    überschrieben werden (`SEL_FORMAT`, `SEL_TITEL`, `DLL_FORMAT`,
+    `DLL_TITEL`, `URL_FILMLISTE`)
 
 ### Version 8 / 07.03.25 ###
 
@@ -246,6 +254,8 @@ eine Reihe von Konfigurationsvariablen:
   - `ZIEL_DOWNLOADS`: Maske für Dateinamen
   - `CMD_DOWNLOADS`: Download-Kommando
   - `QUALITAET`: Download-Qualität ("LOW", "SD", "HD")
+  - `SEL_FORMAT`, `SEL_TITEL`, `DLL_FORMAT`, `DLL_TITEL`, `URL_FILMLISTE`:
+    optional für Experten: überschreibbare Konstanten aus `mtv_const.py`
 
 **Nach der Installation sollte auf alle Fälle die Variable `ZIEL_DOWNLOADS`
 angepasst werden!**
