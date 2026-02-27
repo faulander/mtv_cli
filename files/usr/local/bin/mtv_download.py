@@ -12,6 +12,8 @@
 #
 # --------------------------------------------------------------------------
 
+REP_TAB = str.maketrans("/'`","_´´")
+
 # --- System-Imports   -----------------------------------------------------
 
 import os
@@ -32,8 +34,8 @@ def download_film(options,film):
   # Infos zusammensuchen
   _id = film._id
   size,url = film.get_url(options.config["QUALITAET"])
-  film.thema = film.thema.replace('/','_')
-  film.titel = film.titel.replace('/','_')
+  film.thema = film.thema.translate(REP_TAB)
+  film.titel = film.titel.translate(REP_TAB)
   ext        = url.split(".")[-1].lower()
 
   # Kommando bei Playlisten anpassen. Die Extension der gespeicherten Datei
