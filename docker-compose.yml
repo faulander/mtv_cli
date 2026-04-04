@@ -1,0 +1,39 @@
+services:
+  mtv_cli:
+    build: .
+    container_name: mtv_cli
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8026}:${WEB_PORT:-8026}"
+    environment:
+      # Log-Level: TRACE, DEBUG, INFO, WARN, ERROR
+      - MSG_LEVEL=${MSG_LEVEL:-INFO}
+      # Filme älter als N Tage ignorieren
+      - DATE_CUTOFF=${DATE_CUTOFF:-30}
+      # Filme kürzer als N Minuten ignorieren
+      - DAUER_CUTOFF=${DAUER_CUTOFF:-5}
+      # Anzahl paralleler Downloads
+      - NUM_DOWNLOADS=${NUM_DOWNLOADS:-2}
+      # Zielverzeichnis-Vorlage für Downloads
+      - ZIEL_DOWNLOADS=${ZIEL_DOWNLOADS:-/downloads/{Sender}_{Datum}_{Thema}_{Titel}.{ext}}
+      # Download-Befehl
+      - CMD_DOWNLOADS=${CMD_DOWNLOADS:-wget -q -c -O '{ziel}' '{url}'}
+      # Download-Befehl für M3U-Playlisten
+      - CMD_DOWNLOADS_M3U=${CMD_DOWNLOADS_M3U:-wget -q -O - '{url}' | grep '^http' | wget -q -O '{ziel}' -i -}
+      # Qualität: HD, SD, LOW
+      - QUALITAET=${QUALITAET:-LOW}
+      # Webserver-Port
+      - WEB_PORT=${WEB_PORT:-8026}
+      # Webserver-Adresse
+      - WEB_HOST=${WEB_HOST:-0.0.0.0}
+      # Aktualisierungsintervall in Stunden
+      - UPDATE_INTERVAL=${UPDATE_INTERVAL:-24}
+    volumes:
+      # Datenbank-Speicher
+      - ${DB_PATH:-mtv_db}:/data/db
+      # Heruntergeladene Filme
+      - ${DOWNLOAD_PATH:-mtv_downloads}:/downloads
+
+volumes:
+  mtv_db:
+  mtv_downloads:
