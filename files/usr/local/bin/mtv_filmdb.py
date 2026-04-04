@@ -16,7 +16,7 @@ import sqlite3, json, datetime
 from multiprocessing import Lock
 
 from mtv_filminfo import FilmInfo
-from mtv_msg      import Msg as Msg
+from mtv_msg      import Msg
 
 # --- FilmDB: Datenbank aller Filme   --------------------------------------
 

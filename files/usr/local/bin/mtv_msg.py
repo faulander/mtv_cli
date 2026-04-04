@@ -3,7 +3,7 @@
 # --------------------------------------------------------------------------
 # Mediathekview auf der Kommandozeile
 #
-# Definition der Klasse Msg
+# Logging auf Basis von loguru
 #
 # Author: Bernhard Bablok
 # License: GPL3
@@ -12,31 +12,52 @@
 #
 # --------------------------------------------------------------------------
 
-import datetime, sys
+import sys
+from loguru import logger
+
+# Standardkonfiguration entfernen
+logger.remove()
+
+# Eigenes Format (ähnlich zum bisherigen)
+logger.add(
+    sys.stderr,
+    format="[{level}] [{time:YYYY-MM-DD HH:mm:ss}] {message}",
+    level="TRACE",
+)
+
+# Log-Level-Mapping (bisherige Namen auf loguru-Namen)
+_LEVEL_MAP = {
+    "TRACE": "TRACE",
+    "DEBUG": "DEBUG",
+    "INFO":  "INFO",
+    "WARN":  "WARNING",
+    "ERROR": "ERROR",
+}
+
+def set_level(level_name):
+    """Log-Level setzen. Entfernt den bisherigen Handler und
+       fügt einen neuen mit dem gewünschten Level hinzu."""
+    logger.remove()
+    loguru_level = _LEVEL_MAP.get(level_name, level_name)
+    logger.add(
+        sys.stderr,
+        format="[{level}] [{time:YYYY-MM-DD HH:mm:ss}] {message}",
+        level=loguru_level,
+    )
 
 class Msg:
-  """Simple Klasse für Meldungen"""
+    """Kompatibilitätsklasse — leitet Aufrufe an loguru weiter"""
 
-  MSG_LEVELS={
-    "TRACE":0,
-    "DEBUG":1,
-    "INFO":2,
-    "WARN":3,
-    "ERROR":4
-    }
+    level = "INFO"
 
-  level = "INFO"    # beim Initialisieren überschreiben
+    @staticmethod
+    def msg(msg_level, text, nl=True):
+        """Ausgabe einer Meldung"""
+        if not nl:
+            # Fortschrittsanzeige ohne Zeilenumbruch (wie bisher direkt auf stderr)
+            sys.stderr.write(text)
+            sys.stderr.flush()
+            return
 
-  # --- Ausgabe einer Meldung   ---------------------------------------------
-
-  def msg(msg_level,text,nl=True):
-    """Ausgabe einer Meldung"""
-    if Msg.MSG_LEVELS[msg_level] >= Msg.MSG_LEVELS[Msg.level]:
-      if nl:
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        sys.stderr.write("[" + msg_level + "] " + "[" + now + "] " + text + "\n")
-      else:
-        sys.stderr.write(text)
-        sys.stderr.flush()
-
-
+        loguru_level = _LEVEL_MAP.get(msg_level, msg_level)
+        logger.log(loguru_level, text)

@@ -24,7 +24,7 @@ from multiprocessing.pool import ThreadPool
 
 # --- eigene Imports   ------------------------------------------------------
 
-from mtv_msg    import Msg as Msg
+from mtv_msg    import Msg
 
 # --- Download eines Films   -----------------------------------------------
 

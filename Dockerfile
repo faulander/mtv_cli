@@ -4,15 +4,21 @@ FROM debian:12-slim
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-      python3 python3-pip python3-bottle wget && \
-    pip3 install --break-system-packages pick && \
+      python3 wget curl ca-certificates && \
     rm -rf /var/lib/apt/lists/*
+
+# uv installieren
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
 # Benutzer und Verzeichnisse anlegen
 RUN useradd -m mtv && \
     mkdir -p /data/db /downloads && \
     chown mtv /data/db /downloads && \
     ln -s /data/db /home/mtv/.mediathek3
+
+# Python-Abhängigkeiten mit uv installieren
+COPY pyproject.toml /app/
+RUN cd /app && uv pip install --system -r pyproject.toml
 
 # Anwendungsdateien installieren
 COPY files/usr/local/bin/ /usr/local/bin/

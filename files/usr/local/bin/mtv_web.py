@@ -27,7 +27,7 @@ from bottle import route
 import mtv_cli
 from mtv_const    import FILME_SQLITE, MTV_CLI_HOME
 from mtv_filmdb   import FilmDB as FilmDB
-from mtv_msg      import Msg as Msg
+from mtv_msg      import Msg, set_level
 from mtv_download import download_filme
 
 # --- Hilfsklasse für Optionen   --------------------------------------------
@@ -352,11 +352,10 @@ if __name__ == '__main__':
   opt_parser = get_parser()
   options = opt_parser.parse_args(namespace=Options)
 
-  # Message-Klasse konfigurieren
-  if options.level:
-    Msg.level = options.level
-  else:
-    Msg.level = config["MSG_LEVEL"]
+  # Log-Level konfigurieren
+  log_level = options.level if options.level else config["MSG_LEVEL"]
+  Msg.level = log_level
+  set_level(log_level)
 
   # Verzeichnis HOME/.mediathek3 anlegen
   if not os.path.exists(MTV_CLI_HOME):
