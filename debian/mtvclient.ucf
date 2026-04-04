@@ -1,2 +1,0 @@
-# handle mtv_cli.conf as config file
-/usr/share/mtvclient/mtv_cli.conf.new /etc/mtv_cli.conf
