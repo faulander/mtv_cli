@@ -5,6 +5,8 @@ import { saveStatus } from './filmdb';
 import { loadConfig } from './settings';
 import { updateTaskProgress } from './background-tasks';
 import { matchSuchbegriffe } from './suchbegriffe';
+import { runTask } from './background-tasks';
+import { downloadFilme } from './download-manager';
 
 const URL_FILMLISTE = 'https://liste.mediathekview.de/Filmliste-akt.xz';
 const BUFSIZE = 8192;
@@ -115,15 +117,23 @@ export async function updateFilmList(): Promise<void> {
 	saveStatus('_akt');
 	saveStatus('_anzahl', String(inserted));
 
-	// Suchbegriffe abgleichen
-	updateTaskProgress('aktualisieren', 'Gleiche Suchbegriffe ab...');
-	const matched = matchSuchbegriffe();
+	// Suchbegriffe abgleichen (wenn aktiviert)
+	let matched = 0;
+	if (config.AUTO_ABGLEICH) {
+		updateTaskProgress('aktualisieren', 'Gleiche Suchbegriffe ab...');
+		matched = matchSuchbegriffe();
+	}
 
 	updateTaskProgress(
 		'aktualisieren',
 		`Fertig: ${inserted.toLocaleString('de-DE')} Filme importiert (${errors} Dubletten)` +
 			(matched > 0 ? `, ${matched} neue Filme vorgemerkt` : '')
 	);
+
+	// Downloads automatisch starten (wenn aktiviert)
+	if (config.AUTO_DOWNLOAD && matched > 0) {
+		runTask('download', downloadFilme);
+	}
 
 	// xz-Prozess abwarten
 	await proc.exited;

@@ -12,6 +12,8 @@ export interface AppConfig {
 	WEB_PORT: number;
 	WEB_HOST: string;
 	UPDATE_INTERVAL: number;
+	AUTO_ABGLEICH: boolean;
+	AUTO_DOWNLOAD: boolean;
 }
 
 export const DEFAULT_CONFIG: AppConfig = {
@@ -25,5 +27,7 @@ export const DEFAULT_CONFIG: AppConfig = {
 	QUALITAET: 'LOW',
 	WEB_PORT: 8026,
 	WEB_HOST: '0.0.0.0',
-	UPDATE_INTERVAL: 24
+	UPDATE_INTERVAL: 24,
+	AUTO_ABGLEICH: true,
+	AUTO_DOWNLOAD: false
 };

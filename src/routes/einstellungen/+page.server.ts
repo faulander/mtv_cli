@@ -25,7 +25,9 @@ export const actions: Actions = {
 			QUALITAET: (formData.get('QUALITAET')?.toString() || 'LOW') as Qualitaet,
 			WEB_PORT: parseInt(formData.get('WEB_PORT')?.toString() || '8026') || 8026,
 			WEB_HOST: formData.get('WEB_HOST')?.toString() || '0.0.0.0',
-			UPDATE_INTERVAL: parseInt(formData.get('UPDATE_INTERVAL')?.toString() || '24') || 24
+			UPDATE_INTERVAL: parseInt(formData.get('UPDATE_INTERVAL')?.toString() || '24') || 24,
+			AUTO_ABGLEICH: formData.get('AUTO_ABGLEICH') === 'on',
+			AUTO_DOWNLOAD: formData.get('AUTO_DOWNLOAD') === 'on'
 		};
 
 		// Zielverzeichnis validieren: Basisverzeichnis vor den Platzhaltern prüfen

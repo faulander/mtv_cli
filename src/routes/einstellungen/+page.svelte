@@ -66,6 +66,30 @@
 					/>
 				</div>
 			</div>
+			<div class="mt-4 flex flex-col gap-3">
+				<label class="inline-flex items-center gap-3">
+					<input
+						type="checkbox"
+						name="AUTO_ABGLEICH"
+						checked={config.AUTO_ABGLEICH}
+						class="rounded border-neutral-300 text-blue-600 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800"
+					/>
+					<span class="text-sm text-neutral-700 dark:text-neutral-300">
+						Suchbegriffe automatisch abgleichen nach Aktualisierung
+					</span>
+				</label>
+				<label class="inline-flex items-center gap-3">
+					<input
+						type="checkbox"
+						name="AUTO_DOWNLOAD"
+						checked={config.AUTO_DOWNLOAD}
+						class="rounded border-neutral-300 text-blue-600 focus:ring-blue-500 dark:border-neutral-600 dark:bg-neutral-800"
+					/>
+					<span class="text-sm text-neutral-700 dark:text-neutral-300">
+						Downloads automatisch starten nach Abgleich
+					</span>
+				</label>
+			</div>
 		</section>
 
 		<!-- Filter -->

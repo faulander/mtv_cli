@@ -1,0 +1,13 @@
+services:
+  mtv-cli:
+    build: .
+    container_name: mtv_downloader
+    restart: unless-stopped
+    ports:
+      - "4000:3000"
+    volumes:
+      - ./data:/data
+      - ./downloads:/downloads
+    environment:
+      - MTV_DB_PATH=/data/filme.sqlite
+      - ORIGIN=http://localhost:4000
