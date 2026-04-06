@@ -6,12 +6,6 @@
 	let { data, form } = $props();
 
 	let config = $derived(form?.config ?? data.config);
-
-	$effect(() => {
-		if (form?.saved) {
-			toastStore.success('Einstellungen gespeichert');
-		}
-	});
 </script>
 
 <div class="space-y-6">
@@ -22,7 +16,12 @@
 		</p>
 	</div>
 
-	<form method="POST" use:enhance class="space-y-8">
+	<form method="POST" use:enhance={() => {
+		return async ({ update }) => {
+			await update({ reset: false });
+			toastStore.success('Einstellungen gespeichert');
+		};
+	}} class="space-y-8">
 		<!-- Allgemein -->
 		<section class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
 			<h3 class="mb-4 text-lg font-semibold">Allgemein</h3>
