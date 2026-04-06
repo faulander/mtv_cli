@@ -188,40 +188,6 @@
 			</div>
 		</section>
 
-		<!-- Webserver -->
-		<section class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-			<h3 class="mb-4 text-lg font-semibold">Webserver</h3>
-			<div class="grid gap-4 sm:grid-cols-2">
-				<div>
-					<label for="WEB_HOST" class="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-						Host
-					</label>
-					<input
-						type="text"
-						name="WEB_HOST"
-						id="WEB_HOST"
-						value={config.WEB_HOST}
-						class="w-full rounded-lg border-neutral-300 font-mono text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-					/>
-				</div>
-
-				<div>
-					<label for="WEB_PORT" class="mb-1 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
-						Port
-					</label>
-					<input
-						type="number"
-						name="WEB_PORT"
-						id="WEB_PORT"
-						value={config.WEB_PORT}
-						min="1"
-						max="65535"
-						class="w-full rounded-lg border-neutral-300 font-mono text-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
-					/>
-				</div>
-			</div>
-		</section>
-
 		<!-- Speichern -->
 		<div class="flex justify-end">
 			<button
