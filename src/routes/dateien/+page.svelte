@@ -19,12 +19,6 @@
 		{ key: '_actions', label: '', class: 'w-24' }
 	];
 
-	$effect(() => {
-		if (form?.message) {
-			if (form.success) toastStore.success(form.message);
-			else toastStore.error(form.message);
-		}
-	});
 </script>
 
 <div class="space-y-6">
@@ -58,7 +52,18 @@
 					>
 						<Download class="h-4 w-4" />
 					</a>
-					<form method="POST" action="?/loeschen" use:enhance>
+					<form method="POST" action="?/loeschen" use:enhance={() => {
+						return async ({ update, result }) => {
+							await update({ reset: false });
+							if (result.type === 'success') {
+								const d = result.data as Record<string, unknown> | undefined;
+								if (d?.message) {
+									if (d.success) toastStore.success(String(d.message));
+									else toastStore.error(String(d.message));
+								}
+							}
+						};
+					}}>
 						<input type="hidden" name="dateiname" value={String((row as Record<string, unknown>)['Dateiname'])} />
 						<button
 							type="submit"

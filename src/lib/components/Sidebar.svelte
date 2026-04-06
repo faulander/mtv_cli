@@ -10,7 +10,8 @@
 		Download,
 		Menu,
 		X,
-		Tv
+		Tv,
+		Bookmark
 	} from '@lucide/svelte';
 	import ThemeToggle from './ThemeToggle.svelte';
 
@@ -21,6 +22,7 @@
 		{ href: '/suche', label: 'Suche', icon: Search },
 		{ href: '/vormerkliste', label: 'Vormerkliste', icon: ListChecks },
 		{ href: '/dateien', label: 'Dateien', icon: FolderOpen },
+		{ href: '/suchbegriffe', label: 'Suchbegriffe', icon: Bookmark },
 		{ href: '/einstellungen', label: 'Einstellungen', icon: Settings }
 	];
 

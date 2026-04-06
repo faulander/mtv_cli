@@ -29,6 +29,14 @@ export function initSchema(db: Database): void {
 		)
 	`);
 
+	db.exec(`
+		CREATE TABLE IF NOT EXISTS suchbegriffe (
+			_id          INTEGER PRIMARY KEY AUTOINCREMENT,
+			suchbegriff  TEXT NOT NULL UNIQUE,
+			erstellt     TEXT NOT NULL
+		)
+	`);
+
 	// filme-Tabelle wird beim Update komplett neu erstellt,
 	// daher hier kein CREATE — nur die anderen Tabellen initialisieren
 }

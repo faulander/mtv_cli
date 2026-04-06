@@ -22,11 +22,6 @@
 		{ key: 'DatumStatus', label: 'Status-Datum', sortable: true, class: 'w-28' }
 	];
 
-	$effect(() => {
-		if (form?.message) {
-			toastStore.success(form.message);
-		}
-	});
 </script>
 
 <div class="space-y-6">
@@ -38,7 +33,16 @@
 	</div>
 
 	{#if selectedIds.size > 0}
-		<form method="POST" action="?/loeschen" use:enhance>
+		<form method="POST" action="?/loeschen" use:enhance={() => {
+			return async ({ update, result }) => {
+				await update({ reset: false });
+				if (result.type === 'success') {
+					const d = result.data as Record<string, unknown> | undefined;
+					if (d?.message) toastStore.success(String(d.message));
+				}
+				selectedIds = new Set();
+			};
+		}}>
 			<input type="hidden" name="ids" value={[...selectedIds].join(',')} />
 			<button
 				type="submit"
