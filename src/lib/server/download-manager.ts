@@ -29,20 +29,23 @@ export async function downloadFilme(): Promise<void> {
 		return;
 	}
 
-	updateTaskProgress('download', `${rows.length} Filme zum Download`);
+	updateTaskProgress('download', `${rows.length} Filme zum Download`, 0);
 
 	let completed = 0;
 	let failed = 0;
+	const errors: string[] = [];
+	const total = rows.length;
 
 	// Sequentiell oder parallel je nach Konfiguration
 	if (config.NUM_DOWNLOADS <= 1) {
 		for (const film of rows) {
-			const success = await downloadSingleFilm(film, config);
-			if (success) completed++;
-			else failed++;
+			const err = await downloadSingleFilm(film, config);
+			if (!err) completed++;
+			else { failed++; errors.push(err); }
 			updateTaskProgress(
 				'download',
-				`${completed + failed} von ${rows.length} (${failed} Fehler)`
+				`${completed + failed} von ${total} (${failed} Fehler)`,
+				Math.round(((completed + failed) / total) * 100)
 			);
 		}
 	} else {
@@ -54,26 +57,28 @@ export async function downloadFilme(): Promise<void> {
 				batch.map((film) => downloadSingleFilm(film, config))
 			);
 			for (const r of results) {
-				if (r.status === 'fulfilled' && r.value) completed++;
-				else failed++;
+				if (r.status === 'fulfilled' && !r.value) completed++;
+				else if (r.status === 'fulfilled' && r.value) { failed++; errors.push(r.value); }
+				else { failed++; errors.push(String((r as PromiseRejectedResult).reason)); }
 			}
 			updateTaskProgress(
 				'download',
-				`${completed + failed} von ${rows.length} (${failed} Fehler)`
+				`${completed + failed} von ${total} (${failed} Fehler)`,
+				Math.round(((completed + failed) / total) * 100)
 			);
 		}
 	}
 
-	updateTaskProgress(
-		'download',
-		`Fertig: ${completed} heruntergeladen, ${failed} Fehler`
-	);
+	const summary = `Fertig: ${completed} heruntergeladen, ${failed} Fehler`;
+	const detail = errors.length ? `\n${errors.join('\n')}` : '';
+	updateTaskProgress('download', summary + detail, 100);
 }
 
+/** Gibt null bei Erfolg zurück, sonst eine Fehlermeldung. */
 async function downloadSingleFilm(
 	film: Film,
 	config: ReturnType<typeof loadConfig>
-): Promise<boolean> {
+): Promise<string | null> {
 	const [size, url] = getFilmUrl(film, config.QUALITAET);
 
 	const thema = sanitizeFilename(film.Thema);
@@ -107,20 +112,25 @@ async function downloadSingleFilm(
 	try {
 		const proc = Bun.spawn(['sh', '-c', cmd], {
 			stdout: 'ignore',
-			stderr: 'ignore'
+			stderr: 'pipe'
 		});
 		const exitCode = await proc.exited;
 
 		if (exitCode === 0) {
 			updateDownloadStatus(film._id, 'K');
 			saveRecording(film._id, ziel);
-			return true;
+			return null;
 		} else {
+			const stderr = await new Response(proc.stderr).text();
+			const msg = `"${film.Titel}": exit ${exitCode} – ${stderr.trim() || 'unbekannter Fehler'}`;
+			console.error(`Download fehlgeschlagen: ${msg}\n  cmd: ${cmd}`);
 			updateDownloadStatus(film._id, 'F');
-			return false;
+			return msg;
 		}
-	} catch {
+	} catch (e) {
+		const msg = `"${film.Titel}": ${e}`;
+		console.error(`Download Ausnahme: ${msg}\n  cmd: ${cmd}`);
 		updateDownloadStatus(film._id, 'F');
-		return false;
+		return msg;
 	}
 }

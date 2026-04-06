@@ -27,7 +27,11 @@ export function runTask(name: string, fn: () => Promise<void>): void {
 
 	fn()
 		.then(() => {
-			tasks.set(name, { status: 'complete', message: 'Fertig' });
+			const existing = tasks.get(name);
+			tasks.set(name, {
+				status: 'complete',
+				message: existing?.message || 'Fertig'
+			});
 		})
 		.catch((e) => {
 			tasks.set(name, { status: 'error', message: String(e) });

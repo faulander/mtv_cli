@@ -2,6 +2,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { loadConfig, saveConfig } from '$lib/server/settings';
 import type { AppConfig } from '$lib/types/config';
 import type { Qualitaet } from '$lib/types/film';
+import { existsSync, accessSync, constants, mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
 
 export const load: PageServerLoad = async () => {
 	const config = loadConfig();
@@ -25,6 +27,37 @@ export const actions: Actions = {
 			WEB_HOST: formData.get('WEB_HOST')?.toString() || '0.0.0.0',
 			UPDATE_INTERVAL: parseInt(formData.get('UPDATE_INTERVAL')?.toString() || '24') || 24
 		};
+
+		// Zielverzeichnis validieren: Basisverzeichnis vor den Platzhaltern prüfen
+		const ziel = config.ZIEL_DOWNLOADS;
+		// Alles bis zum ersten {Platzhalter} nehmen, dann das Verzeichnis davon
+		const beforePlaceholder = ziel.split('{')[0];
+		const baseDir = beforePlaceholder.endsWith('/')
+			? beforePlaceholder.slice(0, -1)
+			: dirname(beforePlaceholder);
+
+		if (baseDir) {
+			if (!existsSync(baseDir)) {
+				try {
+					mkdirSync(baseDir, { recursive: true });
+				} catch {
+					return {
+						config,
+						saved: false,
+						error: `Zielverzeichnis "${baseDir}" kann nicht erstellt werden`
+					};
+				}
+			}
+			try {
+				accessSync(baseDir, constants.W_OK);
+			} catch {
+				return {
+					config,
+					saved: false,
+					error: `Zielverzeichnis "${baseDir}" ist nicht beschreibbar`
+				};
+			}
+		}
 
 		saveConfig(config);
 		return { config, saved: true };

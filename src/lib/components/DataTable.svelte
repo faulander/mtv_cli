@@ -19,6 +19,7 @@
 		idKey?: string;
 		onselect?: (ids: Set<string>) => void;
 		cell?: Snippet<[{ row: T; column: Column }]>;
+		rowClass?: (row: T) => string;
 		emptyTitle?: string;
 		emptyDescription?: string;
 	}
@@ -32,6 +33,7 @@
 		idKey = '_id',
 		onselect,
 		cell,
+		rowClass,
 		emptyTitle = 'Keine Daten',
 		emptyDescription = ''
 	}: Props = $props();
@@ -135,7 +137,7 @@
 				</thead>
 				<tbody class="divide-y divide-neutral-100 dark:divide-neutral-800">
 					{#each pagedData as row}
-						<tr class="transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900/50">
+						<tr class="transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-900/50 {rowClass ? rowClass(row) : ''}">
 							{#if selectable}
 								<td class="px-3 py-2.5">
 									<input

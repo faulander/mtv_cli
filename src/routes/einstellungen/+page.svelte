@@ -17,9 +17,16 @@
 	</div>
 
 	<form method="POST" use:enhance={() => {
-		return async ({ update }) => {
+		return async ({ update, result }) => {
 			await update({ reset: false });
-			toastStore.success('Einstellungen gespeichert');
+			if (result.type === 'success') {
+				const d = result.data as Record<string, unknown> | undefined;
+				if (d?.error) {
+					toastStore.error(String(d.error));
+				} else if (d?.saved) {
+					toastStore.success('Einstellungen gespeichert');
+				}
+			}
 		};
 	}} class="space-y-8">
 		<!-- Allgemein -->
